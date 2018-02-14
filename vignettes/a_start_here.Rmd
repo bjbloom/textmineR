@@ -53,6 +53,7 @@ The code below uses a dataset of movie reviews included with the `text2vec` pack
 
 ```{r}
 library(textmineR)
+library(dplyr)
 
 # load movie_review dataset from text2vec
 data(movie_review, package = "text2vec")
@@ -62,9 +63,8 @@ str(movie_review)
 # let's take a sample so the demo will run quickly
 # note: textmineR is generally quite scaleable, depending on your system
 set.seed(123)
-s <- sample(1:nrow(movie_review), 500)
 
-movie_review <- movie_review[ s , ]
+movie_review <- movie_review %>% sample_n(500)
 
 # create a document term matrix 
 dtm <- CreateDtm(doc_vec = movie_review$review, # character vector of documents
@@ -124,7 +124,10 @@ str(tf_mat)
 
 ```{r eval = FALSE}
 # look at the most frequent tokens
-head(tf_mat[ order(tf_mat$term_freq, decreasing = TRUE) , ], 10)
+
+tf_mat %>% 
+  arrange(desc(term_freq)) %>% 
+  top_n(10, wt = term_freq)
 
 ```
 
