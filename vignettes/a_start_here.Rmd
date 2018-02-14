@@ -54,6 +54,7 @@ The code below uses a dataset of movie reviews included with the `text2vec` pack
 ```{r}
 library(textmineR)
 library(dplyr)
+library(stringr)
 
 # load movie_review dataset from text2vec
 data(movie_review, package = "text2vec")
@@ -133,24 +134,30 @@ tf_mat %>%
 
 
 ```{r echo = FALSE}
-knitr::kable(head(tf_mat[ order(tf_mat$term_freq, decreasing = TRUE) , ], 10),
+knitr::kable(tf_mat %>% arrange(desc(term_freq)) %>% top_n(10, wt = term_freq),
              caption = "Ten most frequent tokens")
 
 ```
 
 ```{r }
 # look at the most frequent bigrams
-tf_bigrams <- tf_mat[ stringr::str_detect(tf_mat$term, "_") , ]
+tf_bigrams <- tf_mat %>% 
+  filter(str_detect(term, "_"))
 
 ```
 
 ```{r eval = FALSE}
-head(tf_bigrams[ order(tf_bigrams$term_freq, decreasing = TRUE) , ], 10)
+tf_bigrams %>% 
+  arrange(desc(term_freq)) %>% 
+  top_n(10, wt = term_freq)
+
 ```
 
 ```{r echo = FALSE}
 
-knitr::kable(head(tf_bigrams[ order(tf_bigrams$term_freq, decreasing = TRUE) , ], 10),
+knitr::kable(tf_bigrams %>% 
+  arrange(desc(term_freq)) %>% 
+  top_n(10, wt = term_freq),
              caption = "Ten most frequent bi-grams")
 
 ```
