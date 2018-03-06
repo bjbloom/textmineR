@@ -175,28 +175,21 @@ dtm <- dtm[ , ! stringr::str_detect(colnames(dtm),
 # re-construct tf_mat and tf_bigrams
 tf_mat <- TermDocFreq(dtm)
 
-tf_bigrams <- tf_mat[ stringr::str_detect(tf_mat$term, "_") , ]
+tf_bigrams <- tf_mat %>% 
+  filter(str_detect(term, "_"))
 
 ```
 
 ```{r}
-head(tf_mat[ order(tf_mat$term_freq, decreasing = TRUE) , ], 10)
+tf_bigrams %>% 
+  arrange(desc(term_freq)) %>% 
+  top_n(10, wt = term_freq)
 ```
 
 ```{r echo = FALSE}
-knitr::kable(head(tf_mat[ order(tf_mat$term_freq, decreasing = TRUE) , ], 10),
-             caption = "Ten most frequent terms, '\\<br\\>' removed")
-
-```
-
-```{r eval = FALSE}
-head(tf_bigrams[ order(tf_bigrams$term_freq, decreasing = TRUE) , ], 10)
-```
-
-
-```{r echo = FALSE}
-
-knitr::kable(head(tf_bigrams[ order(tf_bigrams$term_freq, decreasing = TRUE) , ], 10),
+knitr::kable(tf_bigrams %>% 
+  arrange(desc(term_freq)) %>% 
+  top_n(10, wt = term_freq),
              caption = "Ten most frequent bi-grams, '\\<br\\>' removed")
 ```
 
